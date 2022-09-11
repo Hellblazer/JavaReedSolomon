@@ -17,21 +17,19 @@ import java.nio.ByteBuffer;
 /**
  * Command-line program that decodes a file using Reed-Solomon 4+2.
  *
- * The file name given should be the name of the file to decode, say
- * "foo.txt".  This program will expected to find "foo.txt.0" through
- * "foo.txt.5", with at most two missing.  It will then write
- * "foo.txt.decoded".
+ * The file name given should be the name of the file to decode, say "foo.txt".
+ * This program will expected to find "foo.txt.0" through "foo.txt.5", with at
+ * most two missing. It will then write "foo.txt.decoded".
  */
 public class SampleDecoder {
 
-    public static final int DATA_SHARDS = 4;
+    public static final int BYTES_IN_INT  = 4;
+    public static final int DATA_SHARDS   = 4;
     public static final int PARITY_SHARDS = 2;
+
     public static final int TOTAL_SHARDS = 6;
 
-    public static final int BYTES_IN_INT = 4;
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void main(String [] arguments) throws IOException {
+    public static void main(String[] arguments) throws IOException {
 
         // Parse the command line
         if (arguments.length != 1) {
@@ -47,17 +45,15 @@ public class SampleDecoder {
         // Read in any of the shards that are present.
         // (There should be checking here to make sure the input
         // shards are the same size, but there isn't.)
-        final byte [] [] shards = new byte [TOTAL_SHARDS] [];
-        final boolean [] shardPresent = new boolean [TOTAL_SHARDS];
+        final byte[][] shards = new byte[TOTAL_SHARDS][];
+        final boolean[] shardPresent = new boolean[TOTAL_SHARDS];
         int shardSize = 0;
         int shardCount = 0;
         for (int i = 0; i < TOTAL_SHARDS; i++) {
-            File shardFile = new File(
-                    originalFile.getParentFile(),
-                    originalFile.getName() + "." + i);
+            File shardFile = new File(originalFile.getParentFile(), originalFile.getName() + "." + i);
             if (shardFile.exists()) {
                 shardSize = (int) shardFile.length();
-                shards[i] = new byte [shardSize];
+                shards[i] = new byte[shardSize];
                 shardPresent[i] = true;
                 shardCount += 1;
                 InputStream in = new FileInputStream(shardFile);
@@ -76,7 +72,7 @@ public class SampleDecoder {
         // Make empty buffers for the missing shards.
         for (int i = 0; i < TOTAL_SHARDS; i++) {
             if (!shardPresent[i]) {
-                shards[i] = new byte [shardSize];
+                shards[i] = new byte[shardSize];
             }
         }
 
@@ -86,7 +82,7 @@ public class SampleDecoder {
 
         // Combine the data shards into one buffer for convenience.
         // (This is not efficient, but it is convenient.)
-        byte [] allBytes = new byte [shardSize * DATA_SHARDS];
+        byte[] allBytes = new byte[shardSize * DATA_SHARDS];
         for (int i = 0; i < DATA_SHARDS; i++) {
             System.arraycopy(shards[i], 0, allBytes, shardSize * i, shardSize);
         }
@@ -96,8 +92,9 @@ public class SampleDecoder {
 
         // Write the decoded file
         File decodedFile = new File(originalFile.getParentFile(), originalFile.getName() + ".decoded");
-        OutputStream out = new FileOutputStream(decodedFile);
-        out.write(allBytes, BYTES_IN_INT, fileSize);
+        try (OutputStream out = new FileOutputStream(decodedFile)) {
+            out.write(allBytes, BYTES_IN_INT, fileSize);
+        }
         System.out.println("Wrote " + decodedFile);
     }
 }

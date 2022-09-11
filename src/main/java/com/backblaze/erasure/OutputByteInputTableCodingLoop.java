@@ -9,13 +9,10 @@ package com.backblaze.erasure;
 public class OutputByteInputTableCodingLoop extends CodingLoopBase {
 
     @Override
-    public void codeSomeShards(
-            byte[][] matrixRows,
-            byte[][] inputs, int inputCount,
-            byte[][] outputs, int outputCount,
-            int offset, int byteCount) {
+    public void codeSomeShards(byte[][] matrixRows, byte[][] inputs, int inputCount, byte[][] outputs, int outputCount,
+                               int offset, int byteCount) {
 
-        final byte [] [] table = Galois.MULTIPLICATION_TABLE;
+        final byte[][] table = Galois.MULTIPLICATION_TABLE;
         for (int iOutput = 0; iOutput < outputCount; iOutput++) {
             final byte[] outputShard = outputs[iOutput];
             final byte[] matrixRow = matrixRows[iOutput];

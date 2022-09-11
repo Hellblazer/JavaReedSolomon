@@ -9,11 +9,8 @@ package com.backblaze.erasure;
 public class ByteInputOutputExpCodingLoop extends CodingLoopBase {
 
     @Override
-    public void codeSomeShards(
-            byte[][] matrixRows,
-            byte[][] inputs, int inputCount,
-            byte[][] outputs, int outputCount,
-            int offset, int byteCount) {
+    public void codeSomeShards(byte[][] matrixRows, byte[][] inputs, int inputCount, byte[][] outputs, int outputCount,
+                               int offset, int byteCount) {
 
         for (int iByte = offset; iByte < offset + byteCount; iByte++) {
             {
